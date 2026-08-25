@@ -1,0 +1,52 @@
+import axios from 'axios';
+
+export const createPaymentSession = async (req, res) => {
+  try {
+    const { amount, orderId, customerEmail } = req.body;
+
+    // Safepay requires amounts in minor units (e.g., 1000 PKR = 1000.00 -> 1000)
+    // Always validate that the currency is strictly PKR for local methods
+    const payload = {
+      amount: Math.round(amount), 
+      currency: "PKR",
+      client_to_merchant_reference: orderId,
+      redirect_url: `https://yourfrontend.com{orderId}`,
+      cancel_url: "https://yourfrontend.com",
+      customer_email: customerEmail
+    };
+
+    const response = await axios.post(
+      `${process.env.SAFEPAY_API_URL}/order/v1/init`, 
+      payload,
+      {
+        headers: {
+          'X-SFPY-MERCHANT-SECRET': process.env.SAFEPAY_API_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    // This returns a token and a redirect link where users choose Card/EasyPaisa/JazzCash
+    return res.status(200).json({
+      success: true,
+      checkoutUrl: response.data.data.redirect_url,
+      token: response.data.data.token
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Payment initialization failed",
+      error: error.response?.data || error.message
+    });
+  }
+};
+
+
+areeshahameed26_db_user
+cn0wx0ES985oY2mv
+
+MONGODB_URI=mongodb+srv://bsse23095_db_user:Lkiyqk0m5c57r4B7@cluster0.oxgqjg8.mongodb.net
+
+
+mongodb+srv://<db_username>:Lkiyqk0m5c57r4B7@cluster0.oxgqjg8.mongodb.net/?appName=Cluster0
