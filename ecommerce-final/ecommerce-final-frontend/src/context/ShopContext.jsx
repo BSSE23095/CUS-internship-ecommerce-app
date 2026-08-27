@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 export const ShopContext = createContext();
 
@@ -10,9 +11,7 @@ const ShopContextProvider = ({ children }) => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:4000/api/product/list",
-        );
+        const response = await axios.get(`${API_URL}/api/product/list`);
 
         if (response.data.success) {
           setProducts(response.data.products);
@@ -92,7 +91,7 @@ const ShopContextProvider = ({ children }) => {
     if (!token) return;
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/order/userorders",
+        `${API_URL}/api/order/userorders`,
         {},
         { headers: { token } },
       );

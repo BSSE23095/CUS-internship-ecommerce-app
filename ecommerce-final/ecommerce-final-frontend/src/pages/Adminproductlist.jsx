@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { occasionCategories } from "../assets/assets";
+import { API_URL } from "../config";
 
 const PRODUCT_TYPES = ["Earrings", "Necklace", "Bangles", "Bundle"];
 
@@ -15,7 +16,7 @@ const AdminProductList = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/product/list");
+      const response = await axios.get(`${API_URL}/api/product/list`);
       if (response.data.success) {
         setProducts(response.data.products);
       }
@@ -30,9 +31,9 @@ const AdminProductList = () => {
     if (!window.confirm("Delete this product?")) return;
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/product/remove",
+        `${API_URL}/api/product/remove`,
         { _id: id },
-        { headers: { token: adminToken } }
+        { headers: { token: adminToken } },
       );
       if (response.data.success) {
         setProducts((prev) => prev.filter((p) => p._id !== id));
@@ -69,13 +70,17 @@ const AdminProductList = () => {
   const saveEdit = async (id) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/product/update",
+        `${API_URL}/api/product/update`,
         { _id: id, ...editData },
-        { headers: { token: adminToken } }
+        { headers: { token: adminToken } },
       );
       if (response.data.success) {
         setProducts((prev) =>
-          prev.map((p) => (p._id === id ? { ...p, ...editData, price: Number(editData.price) } : p))
+          prev.map((p) =>
+            p._id === id
+              ? { ...p, ...editData, price: Number(editData.price) }
+              : p,
+          ),
         );
         cancelEdit();
       } else {
@@ -142,7 +147,9 @@ const AdminProductList = () => {
                       className="border border-gray-300 rounded py-2 px-3 text-sm w-full"
                     >
                       {PRODUCT_TYPES.map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
                       ))}
                     </select>
                     <select
@@ -152,7 +159,9 @@ const AdminProductList = () => {
                       className="border border-gray-300 rounded py-2 px-3 text-sm w-full"
                     >
                       {occasionCategories.map((c) => (
-                        <option key={c} value={c}>{c}</option>
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -173,7 +182,11 @@ const AdminProductList = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-[1fr_3fr_1fr_1fr_auto] items-center gap-2 text-sm">
-                  <img src={p.images?.[0]} alt={p.name} className="w-12 h-12 object-cover rounded" />
+                  <img
+                    src={p.images?.[0]}
+                    alt={p.name}
+                    className="w-12 h-12 object-cover rounded"
+                  />
                   <p className="line-clamp-1">{p.name}</p>
                   <p>{p.type}</p>
                   <p>
@@ -181,10 +194,16 @@ const AdminProductList = () => {
                     {p.price}
                   </p>
                   <div className="flex gap-3">
-                    <button onClick={() => startEdit(p)} className="text-blue-600 hover:underline">
+                    <button
+                      onClick={() => startEdit(p)}
+                      className="text-blue-600 hover:underline"
+                    >
                       Edit
                     </button>
-                    <button onClick={() => removeProduct(p._id)} className="text-red-600 hover:underline">
+                    <button
+                      onClick={() => removeProduct(p._id)}
+                      className="text-red-600 hover:underline"
+                    >
                       Delete
                     </button>
                   </div>

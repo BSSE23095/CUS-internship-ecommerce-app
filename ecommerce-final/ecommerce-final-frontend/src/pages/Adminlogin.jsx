@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
+import { API_URL } from "../config";
 
 const AdminLogin = () => {
   const { setAdminToken, navigate } = useContext(ShopContext);
@@ -13,7 +14,7 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:4000/api/user/admin", {
+      const response = await axios.post(`${API_URL}/api/user/admin`, {
         email,
         password,
       });

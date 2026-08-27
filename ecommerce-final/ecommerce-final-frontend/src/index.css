@@ -1,6 +1,14 @@
 @import "tailwindcss";
-
+ 
 a.active hr{
   display:block;
-
+ 
+}
+ 
+body {
+  background-color: #fffdf9;
+  background-image: url("/jewelry-doodle-bg.svg");
+  background-repeat: repeat;
+  background-size: 380px 380px;
+  background-attachment: fixed;
 }

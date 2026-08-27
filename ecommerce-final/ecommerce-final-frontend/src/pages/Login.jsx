@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
+import { API_URL } from "../config";
 
 const Login = () => {
   const { setToken, setAdminToken, navigate } = useContext(ShopContext);
@@ -20,7 +21,7 @@ const Login = () => {
 
     try {
       if (loginMode === "admin") {
-        const response = await axios.post("http://localhost:4000/api/user/admin", {
+        const response = await axios.post(`${API_URL}/api/user/admin`, {
           email: formData.email,
           password: formData.password,
         });
@@ -38,7 +39,7 @@ const Login = () => {
         currentState === "Login" ? "/api/user/login" : "/api/user/register";
 
       const response = await axios.post(
-        `http://localhost:4000${endpoint}`,
+        `${API_URL}${endpoint}`,
         formData
       );
 
@@ -72,6 +73,7 @@ const Login = () => {
         >
           Customer
         </button>
+
         <button
           type="button"
           onClick={() => setLoginMode("admin")}
@@ -103,6 +105,7 @@ const Login = () => {
             className="w-full px-3 py-2 border border-gray-800 rounded"
           />
         )}
+
         <input
           name="email"
           type="email"
@@ -111,6 +114,7 @@ const Login = () => {
           placeholder="Email"
           className="w-full px-3 py-2 border border-gray-800 rounded"
         />
+
         <input
           name="password"
           type="password"
@@ -123,12 +127,19 @@ const Login = () => {
         {loginMode === "customer" && (
           <div className="w-full flex justify-between text-sm">
             <p className="cursor-pointer">Forgot password?</p>
+
             {currentState === "Login" ? (
-              <p onClick={() => setCurrentState("Sign Up")} className="cursor-pointer">
+              <p
+                onClick={() => setCurrentState("Sign Up")}
+                className="cursor-pointer"
+              >
                 Create account
               </p>
             ) : (
-              <p onClick={() => setCurrentState("Login")} className="cursor-pointer">
+              <p
+                onClick={() => setCurrentState("Login")}
+                className="cursor-pointer"
+              >
                 Already have an account? Login
               </p>
             )}

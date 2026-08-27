@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import axios from "axios";
+import { API_URL } from "../config";
 
 const PlaceOrders = () => {
   const {
@@ -47,7 +48,12 @@ const PlaceOrders = () => {
 
     const items = Object.entries(cartItems).map(([itemId, quantity]) => {
       const product = products.find((p) => p._id === itemId);
-      return { productId: itemId, name: product?.name, quantity, price: product?.price };
+      return {
+        productId: itemId,
+        name: product?.name,
+        quantity,
+        price: product?.price,
+      };
     });
 
     if (items.length === 0) {
@@ -58,13 +64,13 @@ const PlaceOrders = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/order/place",
+        `${API_URL}/api/order/place`,
         {
           items,
           amount: getCartAmount() + delivery_fee,
           address: formData,
         },
-        { headers: { token } }
+        { headers: { token } },
       );
 
       if (response.data.success) {
@@ -75,14 +81,20 @@ const PlaceOrders = () => {
       }
     } catch (error) {
       console.log(error);
-      alert(error.response?.data?.message || "Order failed. Is the backend running?");
+      alert(
+        error.response?.data?.message ||
+          "Order failed. Is the backend running?",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className="flex flex-col sm:flex-row justify-between gap-8 pt-10 border-t">
+    <form
+      onSubmit={onSubmitHandler}
+      className="flex flex-col sm:flex-row justify-between gap-8 pt-10 border-t"
+    >
       <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
         <Title text1="DELIVERY" text2="INFORMATION" />
         <div className="flex gap-3">

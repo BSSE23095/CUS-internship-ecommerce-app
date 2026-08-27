@@ -1,38 +1,72 @@
-import 'dotenv/config'
-import express from "express"
-import cors from "cors"
-import connectdb from "./config/mongodb.js"
-import userRouter from "./routes/userRoute.js"
+import "dotenv/config";
+
+import express from "express";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import connectdb from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
-import productRouter from './routes/productRoute.js'
-import orderRouter from './routes/orderRoute.js'
 
+import userRouter from "./routes/userRoute.js";
+import productRouter from "./routes/productRoute.js";
+import orderRouter from "./routes/orderRoute.js";
 
-//app config
-const app = express()
-const port = process.env.PORT || 4000
+// --------------------------------------------------
+// App configuration
+// --------------------------------------------------
 
-connectdb()
-connectCloudinary()
-console.log("Cloud name:", process.env.CLOUDINARY_NAME)
-console.log("API key:", process.env.CLOUDINARY_API_KEY)
+const app = express();
+const port = process.env.PORT || 4000;
 
-// middlewares
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+// --------------------------------------------------
+// ES module __dirname setup
+// --------------------------------------------------
 
-//api end points
-app.use('/api/user', userRouter);
-app.use('/api/product', productRouter)
-app.use('/api/order', orderRouter)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.get('/', (req, res)=> {
-    res.send("API Working")
-})
+// --------------------------------------------------
+// Database & Cloudinary
+// --------------------------------------------------
 
-app.listen(port, ()=>{
-    console.log("Server started on PORT: "+port)
-})
+connectdb();
+connectCloudinary();
 
-console.log("JWT_SECRET Loaded:", process.env.JWT_SECRET);
+// --------------------------------------------------
+// Middlewares
+// --------------------------------------------------
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+// --------------------------------------------------
+// API routes
+// --------------------------------------------------
+
+app.use("/api/user", userRouter);
+app.use("/api/product", productRouter);
+app.use("/api/order", orderRouter);
+
+// --------------------------------------------------
+// Frontend
+// --------------------------------------------------
+
+const frontendPath = path.join(__dirname, "public");
+
+// Serve React/Vite static files
+app.use(express.static(frontendPath));
+
+// React Router fallback
+app.get("/*splat", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
+
+// --------------------------------------------------
+// Start server
+// --------------------------------------------------
+
+app.listen(port, () => {
+  console.log(`Server started on PORT: ${port}`);
+});

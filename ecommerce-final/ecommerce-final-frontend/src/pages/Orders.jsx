@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
+import { API_URL } from "../config";
 
 const Orders = () => {
   const { currency, token } = useContext(ShopContext);
@@ -13,11 +14,11 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:4000/api/order/userorders",
+          `${API_URL}/api/order/userorders`,
           {},
           {
             headers: { token },
-          }
+          },
         );
 
         if (response.data.success) {
@@ -54,9 +55,7 @@ const Orders = () => {
           {orders.map((order) => (
             <div key={order._id} className="border rounded p-4">
               <div className="flex justify-between text-sm mb-2">
-                <p className="font-medium">
-                  Order #{order._id.slice(-6)}
-                </p>
+                <p className="font-medium">Order #{order._id.slice(-6)}</p>
 
                 <p className="text-gray-500">
                   {new Date(order.date).toLocaleDateString()}

@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
 import { occasionCategories } from "../assets/assets";
+import { API_URL } from "../config";
 
 const PRODUCT_TYPES = ["Earrings", "Necklace", "Bangles", "Bundle"];
 
@@ -50,11 +51,9 @@ const AdminAddProduct = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/product/add",
-        data,
-        { headers: { token: adminToken } }
-      );
+      const response = await axios.post(`${API_URL}/api/product/add`, data, {
+        headers: { token: adminToken },
+      });
 
       if (response.data.success) {
         navigate("/admin/products");
@@ -70,7 +69,10 @@ const AdminAddProduct = () => {
   };
 
   return (
-    <form onSubmit={onSubmitHandler} className="pt-10 max-w-2xl flex flex-col gap-4">
+    <form
+      onSubmit={onSubmitHandler}
+      className="pt-10 max-w-2xl flex flex-col gap-4"
+    >
       <p className="text-2xl mb-2">Add New Product</p>
 
       <div>
@@ -133,7 +135,9 @@ const AdminAddProduct = () => {
           className="border border-gray-300 rounded py-2 px-3 text-sm w-full"
         >
           {PRODUCT_TYPES.map((t) => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t} value={t}>
+              {t}
+            </option>
           ))}
         </select>
         <select
@@ -143,7 +147,9 @@ const AdminAddProduct = () => {
           className="border border-gray-300 rounded py-2 px-3 text-sm w-full"
         >
           {occasionCategories.map((c) => (
-            <option key={c} value={c}>{c}</option>
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
       </div>
